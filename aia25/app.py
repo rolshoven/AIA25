@@ -47,7 +47,9 @@ async def get_agent_response(user_message: str) -> str:
     history = cl.user_session.get("history") or []
 
     # Retrieve the execute agent function from the user session
-    execute_agent = cl.user_session.get("execute_agent", EXERCISE_TO_EXECUTE_AGENT["Exercise 1"])
+    exercise_name = cl.user_session.get("settings", {}).get("exercise", "Exercise 1")
+    execute_agent = EXERCISE_TO_EXECUTE_AGENT[exercise_name]
+    cl.user_session.set("execute_agent", execute_agent)
 
     # Execute agent with input and handle exceptions in the service layer
     response, updated_history = await execute_agent(user_input=user_message, history=history)
@@ -96,6 +98,9 @@ async def on_chat_start():
 
 @cl.on_settings_update
 async def on_settings_update(settings):
+    # Store the entire settings object in user_session
+    cl.user_session.set("settings", settings)
+
     # Update the agent execution function based on the selected exercise
     cl.user_session.set("execute_agent", EXERCISE_TO_EXECUTE_AGENT[settings["exercise"]])
 

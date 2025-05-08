@@ -28,6 +28,23 @@
       "env": {
         "PYTHONPATH": "${workspaceFolder}${pathSeparator}${workspaceFolder}/aia25${pathSeparator}${workspaceFolder}/tools_repo"
       }
+    },
+    {
+      "name": "Chat UI - Langfuse",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "chainlit",
+      "args": ["run", "${workspaceFolder}/aia25/app.py", "-w"],
+      "cwd": "${workspaceFolder}",
+      "console": "integratedTerminal",
+      "justMyCode": false,
+
+      // follow the re-spawned process every time the watcher reloads your app
+      "subProcess": true,
+      "env": {
+        "PYTHONPATH": "${workspaceFolder}${pathSeparator}${workspaceFolder}/aia25${pathSeparator}${workspaceFolder}/tools_repo",
+        "LANGFUSE_TRACING": "True"
+      }
     }
   ]
 }
