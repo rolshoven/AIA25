@@ -1,11 +1,14 @@
 from aia25.bootstrap import *  # noqa: F403,E402
 
 import importlib
+import logging
 from types import ModuleType
 
 import mlflow
 import chainlit as cl
 from agents import enable_verbose_stdout_logging
+
+logger = logging.getLogger("chainlit")
 
 
 EXERCISE_TO_MODULE_IMPORT = {
@@ -19,7 +22,7 @@ EXERCISE_TO_MODULE_IMPORT = {
 }
 
 
-async def load_exercise_agents_module(exercise_name: str) -> ModuleType:
+def load_exercise_agents_module(exercise_name: str) -> ModuleType:
     """
     Loads the agents module for the given exercise name.
 
@@ -34,7 +37,8 @@ async def load_exercise_agents_module(exercise_name: str) -> ModuleType:
     if module_name:
         if mlflow_tracing_enabled():
             mlflow.set_experiment(exercise_name)
-            
+            logger.info(f"MLFlow experiment set to {exercise_name}")
+
         return importlib.import_module(module_name)
 
     raise ImportError(f"Module for {exercise_name} not found")
@@ -65,7 +69,7 @@ async def get_agent_response(user_message: str) -> str:
     history = cl.user_session.get("history") or []
 
     # Retrieve the exercise's agents module from the user session
-    exercise = cl.user_session.get("exercise", await load_exercise_agents_module("Exercise 1"))
+    exercise = cl.user_session.get("exercise")
 
     # Execute agent with input and handle exceptions in the service layer
     response, updated_history = await exercise.execute_agent(user_input=user_message, history=history)
@@ -115,7 +119,7 @@ async def on_chat_start():
 async def on_settings_update(settings):
     # Update the agent execution function based on the selected exercise
     cl.user_session.set("exercise_name", settings["exercise"])
-    cl.user_session.set("exercise", await load_exercise_agents_module(settings["exercise"]))
+    cl.user_session.set("exercise", load_exercise_agents_module(settings["exercise"]))
 
     # If user selected verbose logging, enable it (can't be disabled until restart)
     if settings["verbose_stdout_logging"]:
