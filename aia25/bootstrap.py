@@ -24,7 +24,7 @@ set_default_openai_api("chat_completions")
 
 # Activate MLFlow tracing if MLFlow is available
 logger = logging.getLogger("chainlit")
-mlflow_port = os.getenv("MLFLOW_PORT", "5000")
+mlflow_port = os.getenv("MLFLOW_PORT", "5001")
 
 try:
     response = requests.get(f"http://localhost:{mlflow_port}/health", timeout=2)

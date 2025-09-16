@@ -1,4 +1,4 @@
-from aia25.bootstrap import *  # noqa: F403,E402
+from bootstrap import *  # noqa: F403,E402
 
 import importlib
 import logging
