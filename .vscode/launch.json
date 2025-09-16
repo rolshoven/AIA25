@@ -9,19 +9,18 @@
       "type": "debugpy",
       "request": "launch",
       "module": "chainlit",
-      "args": ["run", "${workspaceFolder}/aia25/app.py", "-w"],
+      "args": [
+        "run",
+        "${workspaceFolder}/aia25/app.py",
+        "-w"
+      ],
       "cwd": "${workspaceFolder}",
       "console": "integratedTerminal",
       "justMyCode": false,
       "python": "${workspaceFolder}/.venv/bin/python",
-
       // follow the re-spawned process every time the watcher reloads your app
       "subProcess": true,
-      "env": {
-        "PYTHONPATH": "${workspaceFolder}${pathSeparator}${workspaceFolder}/aia25${pathSeparator}${workspaceFolder}/tools_repo"
-      }
-    }
-    ,
+    },
     {
       "name": "mlflow UI",
       "type": "debugpy",
