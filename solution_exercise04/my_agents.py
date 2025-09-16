@@ -23,6 +23,24 @@ from .my_tools import (
 )
 
 
+async def extract_user_message(chat_input):
+    if isinstance(chat_input, str):
+        user_text = chat_input
+    else:
+        user_text = ""
+        # Walk backwards to find the last user message
+        for item in reversed(chat_input):
+            try:
+                role = item.get("role") if isinstance(item, dict) else getattr(item, "role", None)
+                if role == "user":
+                    content = item.get("content") if isinstance(item, dict) else getattr(item, "content", "")
+                    user_text = content if isinstance(content, str) else str(content)
+                    break
+            except Exception:
+                # If structure is unexpected, skip and continue
+                continue
+    return user_text
+
 class GlobalContext(BaseModel):
     """
     This class holds the global context for the agent, including the current date and time.
@@ -59,7 +77,8 @@ def scheduling_agent_system_prompt(context: RunContextWrapper[GlobalContext], ag
 scheduling_agent = Agent(
     name="Scheduling Agent",
     instructions=scheduling_agent_system_prompt,
-    tools=[think, ask_for_clarification, get_calendar_appointments]
+    tools=[think, ask_for_clarification, get_calendar_appointments],
+    model="openai/gpt-4o-mini",
 )
 
 
@@ -99,7 +118,7 @@ def public_transport_agent_system_prompt(
 public_transport_agent = Agent(
     name="Public Transport Agent",
     instructions=public_transport_agent_system_prompt,
-    tools=[think, ask_for_clarification, get_connections]
+    tools=[think, ask_for_clarification, get_connections],
 )
 
 
@@ -115,7 +134,7 @@ class OpenStreetMapAgent(Agent):
                 "to answer questions about route directions, nearby places, points of interest, etc."
             ),
             tools=[think, ask_for_clarification],
-            mcp_servers=[mcp_repo.get_server("openstreetmap")]
+            mcp_servers=[mcp_repo.get_server("openstreetmap")],
         )
 
 
@@ -146,7 +165,7 @@ IMPORTANT: Always respond with valid JSON format that can be parsed. Do not incl
 guardrail_agent = Agent(
     name="Topic Check Guardrail",
     instructions=guardrail_agent_system_prompt,
-    output_type=TopicCheckOutput
+    output_type=TopicCheckOutput,
 )
 
 
@@ -154,15 +173,17 @@ guardrail_agent = Agent(
 async def topic_guardrail(
     ctx: RunContextWrapper[None],
     agent: Agent,
-    input: str | list[TResponseInputItem],
+    chat_input: str | list[TResponseInputItem],
 ) -> GuardrailFunctionOutput:
+    # Ensure the guardrail runs on a single-turn plain string (last user message)
+    user_text = await extract_user_message(chat_input)
 
-    result = await Runner.run(guardrail_agent, input, context=ctx.context)
-    result = result.final_output
+    gr_result = await Runner.run(guardrail_agent, user_text)
+    output: TopicCheckOutput = gr_result.final_output
 
     return GuardrailFunctionOutput(
-        output_info=result.reasoning,
-        tripwire_triggered=not result.is_relevant,
+        output_info=output.reasoning,
+        tripwire_triggered=not output.is_relevant,
     )
 
 
@@ -241,4 +262,5 @@ async def execute_agent(user_input: str, history: list[dict[str, str]]) -> tuple
 
         return result.final_output, result.to_input_list()
     except InputGuardrailTripwireTriggered:
-        return "I cannot answer your request", current_history
+        # Tripwire: do not update history in the UI layer
+        return "I cannot answer your request", None

@@ -22,6 +22,24 @@ from .my_tools import (
 )
 
 
+async def extract_user_message(chat_input):
+    if isinstance(chat_input, str):
+        user_text = chat_input
+    else:
+        user_text = ""
+        # Walk backwards to find the last user message
+        for item in reversed(chat_input):
+            try:
+                role = item.get("role") if isinstance(item, dict) else getattr(item, "role", None)
+                if role == "user":
+                    content = item.get("content") if isinstance(item, dict) else getattr(item, "content", "")
+                    user_text = content if isinstance(content, str) else str(content)
+                    break
+            except Exception:
+                # If structure is unexpected, skip and continue
+                continue
+    return user_text
+
 class GlobalContext(BaseModel):
     """
     This class holds the global context for the agent, including the current date and time.
@@ -114,7 +132,7 @@ class OpenStreetMapAgent(Agent):
                 "to answer questions about route directions, nearby places, points of interest, etc."
             ),
             tools=[think, ask_for_clarification],
-            mcp_servers=[mcp_repo.get_server("openstreetmap")]
+            mcp_servers=[mcp_repo.get_server("openstreetmap")],
         )
 
 
@@ -153,10 +171,14 @@ guardrail_agent = Agent(
 async def topic_guardrail(
     ctx: RunContextWrapper[None],
     agent: Agent,
-    input: str | list[TResponseInputItem],
+    chat_input: str | list[TResponseInputItem],
 ) -> GuardrailFunctionOutput:
-    # TODO: Implement the guardrail logic to check if the input is relevant to the topics
-    pass
+    # Ensure the guardrail runs on a single-turn plain string (last user message)
+    user_text = await extract_user_message(chat_input)
+
+    output = None # TODO: implmement guardrail logic
+
+    return None # TODO: implement required guardrail output
 
 
 triage_agent_system_prompt = """
@@ -201,7 +223,8 @@ triage_agent = Agent(
                 different locations."""
             ),
         ),
-    ]
+    ],
+    input_guardrails=None,
 )
 
 
