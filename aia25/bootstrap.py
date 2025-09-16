@@ -1,6 +1,7 @@
 import os
 
 os.environ.setdefault("OPENAI_AGENTS_DISABLE_TRACING", "1")  # Disable default OpenAI tracing
+os.environ.setdefault("MLFLOW_DISABLE_TELEMETRY", "true")
 
 import logging
 import sys
@@ -16,9 +17,7 @@ sys.path.append(str(Path(__file__).resolve().parent.parent))
 logging.getLogger("openai.agents").setLevel(logging.CRITICAL)
 
 # Set up defaults
-custom_client = AsyncOpenAI(
-    api_key=os.getenv("OPENROUTER_API_KEY"), base_url=os.getenv("BASE_URL")
-)
+custom_client = AsyncOpenAI(api_key=os.getenv("OPENROUTER_API_KEY"), base_url=os.getenv("BASE_URL"))
 set_default_openai_client(custom_client)
 set_default_openai_api("chat_completions")
 
