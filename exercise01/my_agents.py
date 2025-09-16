@@ -37,7 +37,7 @@ public_transport_agent = Agent(
         Whenever you plan something, immediately follow up with the plan before answering the question.
         """
     ),
-    tools=[think, ask_for_clarification, get_connections, get_current_date_and_time]
+    tools=[think, ask_for_clarification, get_connections, get_current_date_and_time],
 )
 
 

@@ -156,7 +156,7 @@ triage_agent = Agent(
         #       tool_name="...",
         #       tool_description="...",
         #   ),
-    ]
+    ],
 )
 
 

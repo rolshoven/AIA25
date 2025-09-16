@@ -51,7 +51,7 @@ def scheduling_agent_system_prompt(context: RunContextWrapper[GlobalContext], ag
 scheduling_agent = Agent(
     name="Scheduling Agent",
     instructions=scheduling_agent_system_prompt,
-    tools=[think, ask_for_clarification, get_calendar_appointments]
+    tools=[think, ask_for_clarification, get_calendar_appointments],
 )
 
 
@@ -91,7 +91,7 @@ def public_transport_agent_system_prompt(
 public_transport_agent = Agent(
     name="Public Transport Agent",
     instructions=public_transport_agent_system_prompt,
-    tools=[think, ask_for_clarification, get_connections]
+    tools=[think, ask_for_clarification, get_connections],
 )
 
 
@@ -107,7 +107,7 @@ class OpenStreetMapAgent(Agent):
                 "to answer questions about route directions, nearby places, points of interest, etc."
             ),
             tools=[think, ask_for_clarification],
-            mcp_servers=[mcp_repo.get_server("openstreetmap")]
+            mcp_servers=[mcp_repo.get_server("openstreetmap")],
         )
 
 
@@ -153,7 +153,7 @@ triage_agent = Agent(
                 "different locations."
             ),
         ),
-    ]
+    ],
 )
 
 
