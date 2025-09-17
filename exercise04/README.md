@@ -36,12 +36,9 @@ Have a look at official documentation on [Input Guardrails](https://openai.githu
 Open **`exercise04/my_agents.py`** (listing below).
  You’ll notice four `# TODO:` tags:
 
-```python
-# 1️⃣ instructions= None # TODO
-# 2️⃣ output_type= None # TODO
-# 3️⃣ TODO: Implement the guardrail
-# 4️⃣ TODO: Handle the guardrail exception
-```
+There are 5 TODOS in total. Most of the things you have to implement are already set up for you.  
+To get a better understanding of what to do, you can have a look at the documenation links we provided in this readme.  
+If you still feel lost, you can always have a look at the solution.
 
 Take a moment to skim the surrounding context so each TODO makes sense.
 
@@ -66,7 +63,7 @@ guardrail_agent = Agent(
 **Tips**
 
 1. The system prompt (`guardrail_agent_system_prompt`) is ready—just wire it in.
-2. Re‑use `TopicCheckOutput` so `.model` knows what JSON to expect.
+2. Use the `TopicCheckOutput` model, this tells the agent what JSON structure to return, and allows you to handle the outputs in a typed way.
 3. Keep the model *the same as before*.
 
 > 🔗 Docs: This is OpenAI's description of what structured outputs are [Structured Outputs](https://platform.openai.com/docs/guides/structured-outputs?api-mode=chat)

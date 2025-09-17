@@ -48,7 +48,6 @@ scheduling_agent = Agent(
     name='Scheduling Agent',
     instructions=# Add appropriate system instructions,
     tools=# Include necessary tools for scheduling,
-    model=# Configure model access,
 )
 ```
 
