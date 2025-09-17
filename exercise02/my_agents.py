@@ -42,7 +42,7 @@ def scheduling_agent_system_prompt(context: RunContextWrapper[GlobalContext], ag
 
 
 # TODO: Implement the scheduling_agent with the provided system prompt and tools
-scheduling_agent = None
+scheduling_agent = None # Agent(...)
 
 
 def public_transport_agent_system_prompt(
