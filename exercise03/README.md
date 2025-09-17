@@ -30,7 +30,7 @@ location-based questions (nearby places, route directions, etc.).
 ### 3.1 `OpenStreetMapAgent.setup()`
 
 1. Call the `get_instance()` on `MCPServerRepository` to obtain the singleton.
-2. Retrieve the server with the key `openstreetmaps`.
+2. Retrieve the server with the key `openstreetmap`.
 3. Return `cls(...)` with
     * `name` - a meaningful agent name
     * `instructions` – one or two sentences describing its domain.
